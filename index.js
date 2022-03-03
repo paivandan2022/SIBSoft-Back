@@ -195,7 +195,10 @@ app.get(`/Stock_Detail_Component`, stock_detail.Stock_Detail_Component);
 app.get(`/Stock_Detail_unit`, stock_detail.Stock_Detail_unit);
 
 ///////////--STOCK IMPORT--/////////////
-app.get(`/CheckUnitImport`, stock_import.CheckUnitImport);
+//app.get(`/CheckUnitImport`, stock_import.CheckUnitImport);
+app.post(`/Insert_Import_Blood`, stock_import.Insert_Import_Blood);
+app.put(`/Update_Import_Blood`, stock_import.Update_Import_Blood);
+app.get(`/Select_Import_Blood`, stock_import.Select_Import_Blood);
 
 //////////--Donor--////////////////
 // start จังหวัด อำเภอ ตำบล
