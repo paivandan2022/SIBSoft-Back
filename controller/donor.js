@@ -1,3 +1,4 @@
+//const { log } = require("npmlog");
 const dbConnection = require("../database");
 
 const pname_en_th = (req, res) => {
@@ -10,12 +11,13 @@ const pname_en_th = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      console.log("คำนำหน้า", results[0]);
+      // console.log("คำนำหน้า", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
     });
 };
+
 //=============================//
 const Add_guest_donor = (req, res) => {
   // console.log("Add_guest_donor", req.body.birthday);
@@ -77,7 +79,7 @@ const Add_guest_donor = (req, res) => {
     req.body.value.cid +
     "')";
 
-  console.log(strAdd_G_donor);
+  // console.log(strAdd_G_donor);
   dbConnection
     .execute(strAdd_G_donor)
     .then((results) => {
@@ -93,7 +95,7 @@ const Get_group = (req, res) => {
     .execute("select * from blood_group")
     .then((results) => {
       res.send(results[0]);
-      console.log("bloodgroup", results[0]);
+      // console.log("bloodgroup", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -105,7 +107,7 @@ const Get_mary = (req, res) => {
     .execute("SELECT * FROM donor_marital_status ")
     .then((results) => {
       res.send(results[0]);
-      console.log("สถานะ", results[0]);
+      // console.log("สถานะ", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -117,7 +119,7 @@ const Get_occu = (req, res) => {
     .execute("SELECT * FROM donor_occupation ")
     .then((results) => {
       res.send(results[0]);
-      console.log("อาชีพ", results[0]);
+      // console.log("อาชีพ", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -129,7 +131,7 @@ const Get_sex = (req, res) => {
     .execute("SELECT * FROM bb_sex")
     .then((results) => {
       res.send(results[0]);
-      console.log("เพศ", results[0]);
+      // console.log("เพศ", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -145,7 +147,7 @@ const Get_Zip = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      console.log("ไปรษณีย์", results[0]);
+      // console.log("ไปรษณีย์", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -161,7 +163,7 @@ const Get_Tumbon = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      console.log("ตำบล", req.query.AMPHUR_ID);
+      // console.log("ตำบล", req.query.AMPHUR_ID);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -177,7 +179,7 @@ const Get_Aumpure = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      console.log("อำเภอ", results[0]);
+      // console.log("อำเภอ", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -191,7 +193,7 @@ const Get_Province = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      console.log("จังหวัด", results[0]);
+      // console.log("จังหวัด", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -227,15 +229,96 @@ const Get_donor_list = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      console.log("bloodgroup", results[0]);
+      // console.log("bloodgroup", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
     });
 };
-//=============================//
-//=============================//
-//=============================//
+//11111111111111111111111111111
+const Get_donor11 = (req, res) => {
+  console.log(req.query.id);
+  const str_query =
+    " SELECT gd.*, " +
+    " concat(gd.pname,' ', gd.fname, ' ', gd.lname) as fullname , " +
+    " job.occu_name, " +
+    " marry.status_name, " +
+    " t.DISTRICT_NAME, " +
+    " a.AMPHUR_NAME, " +
+    " p.PROVINCE_NAME, " +
+    " gd.image, " +
+    " sex.name AS sex, " +
+    " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age" +
+    " FROM guest_donor AS gd " +
+    " LEFT JOIN donor_provinces AS p " +
+    "   ON gd.chwpart = p.PROVINCE_ID " +
+    " LEFT JOIN donor_amphures AS a " +
+    "   ON gd.amppart = a.AMPHUR_ID " +
+    " LEFT JOIN donor_districts AS t " +
+    "   ON gd.tmbpart = t.DISTRICT_CODE " +
+    " LEFT JOIN donor_marital_status AS marry " +
+    "   ON gd.marrystatus = marry.status_id " +
+    " LEFT JOIN donor_occupation AS job " +
+    "   ON gd.job = job.occu_id " +
+    " LEFT JOIN bb_sex AS sex" +
+    "   ON gd.sex = sex.code " +
+    " WHERE gd.cid = " +
+    req.query.id;
+  console.log(str_query);
+  dbConnection
+    .execute(str_query)
+    .then((results) => {
+      res.send(results[0]);
+      console.log("Get_donor11", results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+//===============ประวัติการบริจาคเลือด==============//
+const Get_history_donor = (req, res) => {
+  dbConnection
+    .execute(
+      "select donor_count as count_his ,  unit_no as number_his , donor_date as date_his , CONCAT( dorngro,  dornrh ) as group_his  from donor_blood "
+    )
+    .then((results) => {
+      res.send(results[0]);
+      // console.log("ประวัติการบริจาคเลือด", results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+//==============ประวัติการบริจาคเลือด===============//
+
+//===============รายชื่อเจ้าหน้าที่==============//
+const Get_staff = (req, res) => {
+  dbConnection
+    .execute(
+      "select concat(pname,' ',fname,' ',lname) as fullname from bb_user "
+    )
+    .then((results) => {
+      res.send(results[0]);
+      // console.log("รายชื่อเจ้าหน้าที่", results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+//==============รายชื่อเจ้าหน้าที่===============//
+//==============คำถามก่อนกดสมัคร ยืนยัน==============//
+const Get_question = (req, res) => {
+  dbConnection
+    .execute("select * from donor_questionnaire_list")
+    .then((results) => {
+      res.send(results[0]);
+      // console.log("คำถาม", results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+
 //=============================//
 module.exports = {
   pname_en_th,
@@ -249,4 +332,8 @@ module.exports = {
   Get_Aumpure,
   Get_Province,
   Get_donor_list,
+  Get_staff,
+  Get_history_donor,
+  Get_question,
+  Get_donor11,
 };

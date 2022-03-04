@@ -199,6 +199,7 @@ app.get(`/Stock_Detail_unit`, stock_detail.Stock_Detail_unit);
 app.post(`/Insert_Import_Blood`, stock_import.Insert_Import_Blood);
 app.put(`/Update_Import_Blood`, stock_import.Update_Import_Blood);
 app.get(`/Select_Import_Blood`, stock_import.Select_Import_Blood);
+app.delete(`/Delete_Import_Blood`, stock_import.Delete_Import_Blood);
 
 //////////--Donor--////////////////
 // start จังหวัด อำเภอ ตำบล
@@ -222,6 +223,11 @@ app.get(`/Get_group`, donor.Get_group);
 app.post(`/Add_guest_donor`, donor.Add_guest_donor);
 app.get(`/pname_en_th`, donor.pname_en_th);
 app.get(`/Get_donor_list`, donor.Get_donor_list);
+// หน้า Donor_donation_list
+app.get(`/Get_history_donor`, donor.Get_history_donor);
+app.get(`/Get_staff`, donor.Get_staff);
+app.get(`/Get_question`, donor.Get_question);
+app.get(`/Get_donor11`, donor.Get_donor11);
 //--END Donor--//
 
 app.listen(3306, () => console.log("Server is Running..."));
