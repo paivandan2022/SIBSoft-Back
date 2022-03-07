@@ -92,6 +92,33 @@ app.post("/image-upload", imageUpload.array("my-image-file"), (req, res) => {
     message: req.query.id,
   });
 });
+
+// Upload New
+//--Upload--//
+const imageUploadPath2 = configs.IMAGE_PATH_2;
+const storage2 = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadPath2);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${req.query.id}`);
+  },
+});
+
+const imageUpload2 = multer({ storage: storage2, maxCount: 1 });
+//--POST--//
+app.post(
+  "/image-upload-donor",
+  imageUpload2.array("my-image-file"),
+  (req, res) => {
+    console.log("POST request received to /image-upload.");
+    console.log("Axios POST body: ", Object.keys(req));
+    res.send({
+      message: req.query.id,
+    });
+  }
+);
+
 //--PUT--//
 app.put("/update_pic/:id", (req, res) => {
   const strQuery2 =
