@@ -56,14 +56,12 @@ const Insert_Import_Blood = async (req, res) => {
   } = req.body;
 
   const strQuery2 = `select * from blood where blood_no = '${unit_no}' and blood_type = '${type_id}';`;
-
   try {
     const results = await dbConnection.execute(strQuery2);
     if (results[0].length > 0) {
-      console.log("fail+++++++++++++++++", strQuery2);
       return res.status(200).json({
         status: "error",
-        error: "++00++",
+        error: "error",
       });
     } else {
       const strQuery3 = `INSERT INTO blood (id,blood_type, blood_receive, blood_bag_type_id, liquid, receive_date, donor_date, expiry_date, blood_group, blood_rh, blood_value, blood_no, note, staff_name,status) 
@@ -83,7 +81,6 @@ const Insert_Import_Blood = async (req, res) => {
       '${staff_name}','1');`;
 
       const results2 = await dbConnection.execute(strQuery3);
-      console.log("=====", results2);
       return res.status(200).json(results2[0]);
     }
   } catch (error) {
