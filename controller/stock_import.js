@@ -2,7 +2,6 @@ const dbConnection = require("../database");
 
 const Delete_Import_Blood = (req, res) => {
   const { id } = req.query;
-  console.log("ididididididididid", id);
   dbConnection
     .execute(`DELETE FROM blood WHERE id = ${id};`)
     .then((results) => {
@@ -78,7 +77,7 @@ const Insert_Import_Blood = async (req, res) => {
       '${volume || ""}',
       '${unit_no}',
       '${note || ""}',
-      '${staff_name}','1');`;
+      '${staff_name}','15');`;
 
       const results2 = await dbConnection.execute(strQuery3);
       return res.status(200).json(results2[0]);
@@ -89,40 +88,12 @@ const Insert_Import_Blood = async (req, res) => {
 };
 //********************************//
 const Update_Import_Blood = (req, res) => {
-  const strQuery2 =
-    "UPDATE blood set blood_type = '" +
-    req.body.type_id +
-    "', blood_receive= '" +
-    req.body.hos_id +
-    "', blood_bag_type_id = '" +
-    req.body.bag_type_id +
-    "', liquid = '" +
-    req.body.liquid_id +
-    "', receive_date = '" +
-    req.body.date_received +
-    "', donor_date = '" +
-    req.body.date_collect +
-    "', expiry_date = '" +
-    req.body.date_exp +
-    " " +
-    req.body.exp_time +
-    "', blood_group = '" +
-    req.body.blood_group +
-    "', blood_rh = '" +
-    req.body.blood_rh +
-    "', blood_value = '" +
-    req.body.volume +
-    "', blood_no = '" +
-    req.body.unit_no +
-    "', note = '" +
-    req.body.note +
-    "', staff_name = '" +
-    req.body.staff_name +
-    "' WHERE id = '" +
-    req.body.blood_id +
-    "';";
+  const { id } = req.query;
+  //const { status } = req.body;
+  console.log("99999999999", req);
+  const strQuery = `UPDATE blood set status = '1'  WHERE status = '15' and ip ='' and date = '';`;
   dbConnection
-    .execute(strQuery2)
+    .execute(strQuery)
     .then((results) => {
       res.send(results[0]);
     })
