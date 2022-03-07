@@ -88,10 +88,10 @@ const Insert_Import_Blood = async (req, res) => {
 };
 //********************************//
 const Update_Import_Blood = (req, res) => {
-  const { id } = req.query;
-  //const { status } = req.body;
-  console.log("99999999999", req);
-  const strQuery = `UPDATE blood set status = '1'  WHERE status = '15' and ip ='' and date = '';`;
+  const { ids, ip, computerName } = req.body;
+  // const strQuery = `UPDATE blood set status = '1'  WHERE id in  ('15','16') and ip ='${ip}' and date = 'DATE_FORMAT(now(), '%Y/%m/%d')';`;
+  const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids});`;
+
   dbConnection
     .execute(strQuery)
     .then((results) => {
