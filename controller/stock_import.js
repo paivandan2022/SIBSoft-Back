@@ -24,10 +24,11 @@ const Select_Import_Blood = (req, res) => {
       , DATE_FORMAT(DATE_ADD(b.donor_date  , INTERVAL 543 YEAR), '%d/%m/%Y') as unit_collect
       , DATE_FORMAT(DATE_ADD(b.expiry_date , INTERVAL 543 YEAR), '%d/%m/%Y') as unit_exp
       , DATE_FORMAT(DATE_ADD(b.insert_date , INTERVAL 543 YEAR), '%d/%m/%Y') as unit_ins
-      
+      , s.bl_status_name as status_name
       from blood as b
       left join blood_type as t ON b.blood_type = t.id
       left join bb_hospitals as h ON b.blood_receive = h.hos_id
+      left join blood_status as s ON b.status = s.bl_status_id
       where status = 15
       and DATE_FORMAT(b.insert_date, '%d/%m/%Y') = DATE_FORMAT(now(), '%d/%m/%Y') 
       and b.ip_address ='${ip}'
