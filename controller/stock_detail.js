@@ -5,13 +5,13 @@ const Stock_Detail_status = (req, res) => {
   const { status_id, date_type, date_start, date_end, unit_no, antibody } =
     req.query;
 
-  console.log(
-    "==123=",
-    `call Stock_Detail_status('${status_id || ""}','${unit_no || ""}','${
-      antibody || ""
-    }','${date_type || ""}','${date_start || ""}','${date_end || ""}'
-    );`
-  );
+  // console.log(
+  //   "==123=",
+  //   `call Stock_Detail_status('${status_id || ""}','${unit_no || ""}','${
+  //     antibody || ""
+  //   }','${date_type || ""}','${date_start || ""}','${date_end || ""}'
+  //   );`
+  // );
   dbConnection
     .execute(
       `call Stock_Detail_status('${status_id || ""}','${unit_no || ""}','${
@@ -32,13 +32,13 @@ const Stock_Detail_Component = (req, res) => {
   const { status_id, date_type, date_start, date_end, unit_no, antibody } =
     req.query;
 
-  console.log(`call Stock_Detail_Component(
-  '${status_id || ""}',
-  '${unit_no || ""}',
-  '${antibody || ""}',
-  '${date_type || ""}',
-  '${date_start || ""}',
-  '${date_end || ""}')`);
+  // console.log(`call Stock_Detail_Component(
+  // '${status_id || ""}',
+  // '${unit_no || ""}',
+  // '${antibody || ""}',
+  // '${date_type || ""}',
+  // '${date_start || ""}',
+  // '${date_end || ""}')`);
 
   dbConnection
     .execute(
@@ -82,7 +82,7 @@ const Stock_Detail_unit = (req, res) => {
     '${date_end || ""}'
     )`;
 
-  console.log(strQuery2);
+  //console.log(strQuery2);
   dbConnection
     .execute(strQuery2)
     .then((results) => {
