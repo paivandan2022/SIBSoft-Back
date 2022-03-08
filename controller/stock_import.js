@@ -15,7 +15,6 @@ const Delete_Import_Blood = (req, res) => {
 //********************************//
 const Select_Import_Blood = (req, res) => {
   const { ip, computerName } = req.query;
-  console.log("======", req.query);
   dbConnection
     .execute(
       ` select b.* 
@@ -63,8 +62,8 @@ const Insert_Import_Blood = async (req, res) => {
     ip,
     computer_name,
   } = req.body;
-  console.log("===============req", req.body);
-  const strQuery2 = `select * from blood where blood_no = '${unit_no}' and blood_type = '${type_id}';`;
+  const strQuery2 = `select * from blood where blood_no = TRIM('${unit_no}') and blood_type = '${type_id}';`;
+  console.log(strQuery2);
   try {
     const results = await dbConnection.execute(strQuery2);
     if (results[0].length > 0) {
@@ -85,7 +84,7 @@ const Insert_Import_Blood = async (req, res) => {
       '${blood_group || ""}',
       '${blood_rh || ""}',
       '${volume || ""}',
-      '${unit_no}',
+      trim('${unit_no}'),
       '${note || ""}',
       '${staff_name}',
       '15',
@@ -93,7 +92,6 @@ const Insert_Import_Blood = async (req, res) => {
       '${computer_name}',
       now()
       );`;
-      console.log("====strQuery3", strQuery3);
       const results2 = await dbConnection.execute(strQuery3);
       return res.status(200).json(results2[0]);
     }
@@ -104,7 +102,6 @@ const Insert_Import_Blood = async (req, res) => {
 //********************************//
 const Update_Import_Blood = (req, res) => {
   const { ids, ip, computerName } = req.body;
-  // const strQuery = `UPDATE blood set status = '1'  WHERE id in  ('15','16') and ip ='${ip}' and date = 'DATE_FORMAT(now(), '%Y/%m/%d')';`;
   const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids}) and ip_address ='${ip}' and computer_name ='${computerName}' and receive_date = DATE_FORMAT(now(), '%Y/%m/%d') ;`;
   console.log(strQuery);
   dbConnection
