@@ -141,8 +141,11 @@ app.put("/update_pic/:id", (req, res) => {
 
 // นำ img ออกไปแสดง ///
 app.get("/image/:image_name", (req, res) => {
+  const pathType = req.query.pathType;
   fs.readFile(
-    `${imageUploadPath}/${req.params.image_name}`,
+    `${pathType === "2" ? imageUploadPath2 : imageUploadPath}/${
+      req.params.image_name
+    }`,
     function (err, data) {
       if (!err) {
         res.writeHead(200, {
@@ -156,6 +159,7 @@ app.get("/image/:image_name", (req, res) => {
     }
   );
 });
+
 // end นำ img ออกไปแสดง ///
 
 // Add data user //
@@ -227,6 +231,7 @@ app.post(`/Insert_Import_Blood`, stock_import.Insert_Import_Blood);
 app.put(`/Update_Import_Blood`, stock_import.Update_Import_Blood);
 app.get(`/Select_Import_Blood`, stock_import.Select_Import_Blood);
 app.delete(`/Delete_Import_Blood`, stock_import.Delete_Import_Blood);
+app.get(`/Sum_blood`, stock_import.Sum_blood);
 
 //////////--Donor--////////////////
 // start จังหวัด อำเภอ ตำบล

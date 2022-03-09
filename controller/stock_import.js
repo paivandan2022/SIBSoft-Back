@@ -103,7 +103,9 @@ const Insert_Import_Blood = async (req, res) => {
 //********************************//
 const Update_Import_Blood = (req, res) => {
   const { ids, ip, computerName } = req.body;
-  const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids}) and ip_address ='${ip}' and computer_name ='${computerName}' and receive_date = DATE_FORMAT(now(), '%Y/%m/%d') ;`;
+  //const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids}) and ip_address ='${ip}' and computer_name ='${computerName}' and receive_date = DATE_FORMAT(now(), '%Y/%m/%d') ;`;
+  const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids});`;
+
   console.log(strQuery);
   dbConnection
     .execute(strQuery)
@@ -111,13 +113,31 @@ const Update_Import_Blood = (req, res) => {
       res.send(results[0]);
     })
     .catch((error) => {
-      return res.status(200).json({ message: "error" });
+      return res.status(200).json({ message: "error", error: error.message });
     });
 };
 
+const Sum_blood = (req, res) => {
+  console.log("AAAAAAAAAAAAAAAaa  ", req.query);
+  const { ids } = req.query;
+  dbConnection
+    .execute(
+      `SELECT Type, Type_num FROM (SELECT t.s_name AS Type, count( b.blood_type ) AS Type_num FROM blood AS b
+   LEFT JOIN blood_type AS t ON b.blood_type = t.id WHERE b.id IN (${ids}) 
+   GROUP BY b.blood_type ORDER BY t.component_type ASC) AS t1 
+   UNION SELECT 'รวม', count(id) FROM blood WHERE id IN (${ids})`
+    )
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
 module.exports = {
   Select_Import_Blood,
   Insert_Import_Blood,
   Update_Import_Blood,
   Delete_Import_Blood,
+  Sum_blood,
 };

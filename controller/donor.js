@@ -41,7 +41,7 @@ const Add_guest_donor = (req, res) => {
     chwpart,
     tmbpart,
     amppart,
-    zipcode,
+    postcode,
     image,
   } = req.body;
   console.log("req.body---------->", req.body);
@@ -66,7 +66,7 @@ const Add_guest_donor = (req, res) => {
     '${marrystatus}' , 
     '${job}' , 
     '${phone || ""}' ,
-    '${email || ""} , 
+    '${email || ""}' , 
     '${birthday}' ,
     '${addrpart}' ,
     '${soipart || ""}' ,
@@ -86,7 +86,7 @@ const Add_guest_donor = (req, res) => {
       res.send("OK");
     })
     .catch((error) => {
-      return res.status(200).json({ message: "error" });
+      return res.status(200).json({ message: "error", error: error.message });
     });
 };
 //=============================//
@@ -194,6 +194,8 @@ const Get_Province = (req, res) => {
 };
 //=============================//
 const Get_donor_list = (req, res) => {
+  const id = req.query.id;
+
   dbConnection
     .execute(
       " SELECT gd.*, " +
@@ -218,7 +220,8 @@ const Get_donor_list = (req, res) => {
         " LEFT JOIN donor_occupation AS job " +
         "   ON gd.job = job.occu_id " +
         " LEFT JOIN bb_sex AS sex" +
-        "   ON gd.sex = sex.code "
+        "   ON gd.sex = sex.code " +
+        `${id ? ` where cid=${id}` : ""} `
     )
     .then((results) => {
       res.send(results[0]);

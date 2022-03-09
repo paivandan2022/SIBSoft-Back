@@ -206,7 +206,6 @@ const getabocountall = (req, res) => {
 };
 //*********************************//
 const GetUnitUpdateDetail = (req, res) => {
-  console.log("req, res==", req);
   dbConnection
     .execute(`call GetUnitUpdateDetail('${req.query.id}')`)
     .then((results) => {
