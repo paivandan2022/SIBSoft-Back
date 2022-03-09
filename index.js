@@ -244,6 +244,14 @@ app.get(`/Get_Aumpure`, donor.Get_Aumpure);
 app.get(`/Get_Tumbon`, donor.Get_Tumbon);
 // ไปรษณีย์
 app.get(`/Get_Zip`, donor.Get_Zip);
+// จังหวัด_new
+app.get(`/Get_Province_new`, donor.Get_Province_new);
+// อำเภอ
+app.get(`/Get_Aumpure_new`, donor.Get_Aumpure_new);
+// ตำบล
+app.get(`/Get_Tumbon_new`, donor.Get_Tumbon_new);
+// ไปรษณีย์
+app.get(`/Get_Zip_new`, donor.Get_Zip_new);
 // เพศ
 app.get(`/Get_sex`, donor.Get_sex);
 // อาชีพ

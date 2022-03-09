@@ -193,6 +193,65 @@ const Get_Province = (req, res) => {
     });
 };
 //=============================//
+
+//============fetchnew=================//
+const Get_Tumbon_new = (req, res) => {
+  dbConnection
+    .execute(
+      "select DISTRICT_CODE , DISTRICT_NAME from donor_districts where AMPHUR_ID = '" +
+        req.query.AMPHUR_ID +
+        "' order by DISTRICT_NAME asc; "
+    )
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+//=============================//
+const Get_Aumpure_new = (req, res) => {
+  dbConnection
+    .execute(
+      "select AMPHUR_ID, AMPHUR_NAME from donor_amphures where PROVINCE_ID = '" +
+        req.query.PROVINCE_ID +
+        "' order by AMPHUR_NAME asc "
+    )
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+//=============================//
+const Get_Province_new = (req, res) => {
+  dbConnection
+    .execute(
+      "select PROVINCE_ID, PROVINCE_NAME from donor_provinces order by PROVINCE_NAME asc; "
+    )
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+const Get_Zip_new = (req, res) => {
+  dbConnection
+    .execute(
+      "select zipcode from donor_zipcodes where district_code = '" +
+        req.query.DISTRICT_CODE +
+        "' "
+    )
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+//=============================//
 const Get_donor_list = (req, res) => {
   const id = req.query.id;
   dbConnection
@@ -285,6 +344,10 @@ module.exports = {
   Get_Tumbon,
   Get_Aumpure,
   Get_Province,
+  Get_Zip_new,
+  Get_Tumbon_new,
+  Get_Aumpure_new,
+  Get_Province_new,
   Get_donor_list,
   Get_staff,
   Get_history_donor,
