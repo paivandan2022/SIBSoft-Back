@@ -59,12 +59,10 @@ const Insert_Import_Blood = async (req, res) => {
     volume,
     unit_no,
     note,
-    staff_name,
     ip,
     computer_name,
   } = req.body;
   const strQuery2 = `select * from blood where blood_no = TRIM('${unit_no}') and blood_type = '${type_id}';`;
-  console.log(strQuery2);
   try {
     const results = await dbConnection.execute(strQuery2);
     if (results[0].length > 0) {
@@ -73,7 +71,7 @@ const Insert_Import_Blood = async (req, res) => {
         error: "error",
       });
     } else {
-      const strQuery3 = `INSERT INTO blood (id,blood_type, blood_receive, blood_bag_type_id, liquid, receive_date, donor_date, expiry_date, blood_group, blood_rh, blood_value, blood_no, note, staff_name,status,ip_address,computer_name,insert_date) 
+      const strQuery3 = `INSERT INTO blood (id,blood_type, blood_receive, blood_bag_type_id, liquid, receive_date, donor_date, expiry_date, blood_group, blood_rh, blood_value, blood_no, note,status,ip_address,computer_name,insert_date) 
       VALUES ( (select (max(t1.id)+1) FROM blood as t1),
       '${type_id}',
       '${hos_id}',
@@ -87,7 +85,6 @@ const Insert_Import_Blood = async (req, res) => {
       '${volume || ""}',
       trim('${unit_no}'),
       '${note || ""}',
-      '${staff_name}',
       '15',
       '${ip}',
       '${computer_name}',
@@ -102,11 +99,8 @@ const Insert_Import_Blood = async (req, res) => {
 };
 
 const Confirm_password = (req, res) => {
-  console.log(" req.body.password", req.body.password);
   const password = req.body.password;
-
   const strQuery = `SELECT * FROM bb_user where  password = ${password}`;
-  console.log("Confirm_password", strQuery);
   dbConnection
     .execute(strQuery)
     .then((results) => {
@@ -122,8 +116,6 @@ const Update_Import_Blood = (req, res) => {
   const { ids, ip, computerName, staff } = req.body;
   //const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids}) and ip_address ='${ip}' and computer_name ='${computerName}' and receive_date = DATE_FORMAT(now(), '%Y/%m/%d') ;`;
   const strQuery = `UPDATE blood set status = '1',staff_name= '${staff}'  WHERE id in  (${ids});`;
-
-  console.log(strQuery);
   dbConnection
     .execute(strQuery)
     .then((results) => {
@@ -135,7 +127,6 @@ const Update_Import_Blood = (req, res) => {
 };
 
 const Sum_blood = (req, res) => {
-  console.log("AAAAAAAAAAAAAAAaa  ", req.query);
   const { ids } = req.query;
   dbConnection
     .execute(
