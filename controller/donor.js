@@ -195,7 +195,6 @@ const Get_Province = (req, res) => {
 //=============================//
 const Get_donor_list = (req, res) => {
   const id = req.query.id;
-
   dbConnection
     .execute(
       " SELECT gd.*, " +
@@ -225,7 +224,6 @@ const Get_donor_list = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      // console.log("bloodgroup", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
