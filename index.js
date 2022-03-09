@@ -232,6 +232,7 @@ app.put(`/Update_Import_Blood`, stock_import.Update_Import_Blood);
 app.get(`/Select_Import_Blood`, stock_import.Select_Import_Blood);
 app.delete(`/Delete_Import_Blood`, stock_import.Delete_Import_Blood);
 app.get(`/Sum_blood`, stock_import.Sum_blood);
+app.post(`/Confirm_password`, stock_import.Confirm_password);
 
 //////////--Donor--////////////////
 // start จังหวัด อำเภอ ตำบล

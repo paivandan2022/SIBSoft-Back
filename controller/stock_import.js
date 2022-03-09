@@ -100,11 +100,28 @@ const Insert_Import_Blood = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+const Confirm_password = (req, res) => {
+  console.log(" req.body.password", req.body.password);
+  const password = req.body.password;
+
+  const strQuery = `SELECT * FROM bb_user where  password = ${password}`;
+  console.log("Confirm_password", strQuery);
+  dbConnection
+    .execute(strQuery)
+    .then((results) => {
+      res.send(results[0][0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+
 //********************************//
 const Update_Import_Blood = (req, res) => {
-  const { ids, ip, computerName } = req.body;
+  const { ids, ip, computerName, staff } = req.body;
   //const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids}) and ip_address ='${ip}' and computer_name ='${computerName}' and receive_date = DATE_FORMAT(now(), '%Y/%m/%d') ;`;
-  const strQuery = `UPDATE blood set status = '1'  WHERE id in  (${ids});`;
+  const strQuery = `UPDATE blood set status = '1',staff_name= '${staff}'  WHERE id in  (${ids});`;
 
   console.log(strQuery);
   dbConnection
@@ -140,4 +157,5 @@ module.exports = {
   Update_Import_Blood,
   Delete_Import_Blood,
   Sum_blood,
+  Confirm_password,
 };
