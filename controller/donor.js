@@ -49,7 +49,7 @@ const Add_guest_donor = (req, res) => {
   const strAdd_G_donor = `INSERT INTO guest_donor 
     (
       cid, passport, bloodgroup, pname, fname, lname, pname_en, fname_en, lname_en, sex, marrystatus, job, phone,  email, birthday, addrpart, soipart, moopart, roadpart, chwpart, tmbpart, amppart, 
-      postcode ,image
+      postcode ,image,insert_date
     ) 
     VALUES  
     (
@@ -76,7 +76,8 @@ const Add_guest_donor = (req, res) => {
     '${tmbpart}' , 
     '${amppart}' ,
     '${postcode.zipcode}',
-    '${image}'
+    '${image}',
+    now()
       )`;
 
   console.log("strAdd_G_donor------>", strAdd_G_donor);
@@ -253,39 +254,59 @@ const Get_Zip_new = (req, res) => {
 };
 //=============================//
 const Get_donor_list = (req, res) => {
-  const id = req.query.id;
+  const { id, date_start, date_end, keyword } = req.query;
+
+  const whereCondition = [];
+
+  if (id) {
+    whereCondition.push(`cid=${id}`);
+  }
+  if (date_start && date_end) {
+    whereCondition.push(
+      `insert_date between "${date_start} 00:00:00" and "${date_end} 23:59:59"`
+    );
+  }
+  if (keyword) {
+    whereCondition.push(
+      ` concat(fname, ' ', lname) like '%${keyword}%' or cid='${keyword}'  `
+    );
+  }
+
+  const queryString =
+    " SELECT gd.*, " +
+    " concat(gd.pname,' ', gd.fname, ' ', gd.lname) as fullname , " +
+    " job.occu_name, " +
+    " marry.status_name, " +
+    " t.DISTRICT_NAME, " +
+    " a.AMPHUR_NAME, " +
+    " p.PROVINCE_NAME, " +
+    " gd.image, " +
+    " sex.name AS sex, " +
+    " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age" +
+    " FROM guest_donor AS gd " +
+    " LEFT JOIN donor_provinces AS p " +
+    "   ON gd.chwpart = p.PROVINCE_ID " +
+    " LEFT JOIN donor_amphures AS a " +
+    "   ON gd.amppart = a.AMPHUR_ID " +
+    " LEFT JOIN donor_districts AS t " +
+    "   ON gd.tmbpart = t.DISTRICT_CODE " +
+    " LEFT JOIN donor_marital_status AS marry " +
+    "   ON gd.marrystatus = marry.status_id " +
+    " LEFT JOIN donor_occupation AS job " +
+    "   ON gd.job = job.occu_id " +
+    " LEFT JOIN bb_sex AS sex" +
+    "   ON gd.sex = sex.code " +
+    `${
+      whereCondition.length > 0 ? ` where ${whereCondition.join(" AND ")}` : ""
+    }`;
+  console.log("queryString", queryString);
   dbConnection
-    .execute(
-      " SELECT gd.*, " +
-        " concat(gd.pname,' ', gd.fname, ' ', gd.lname) as fullname , " +
-        " job.occu_name, " +
-        " marry.status_name, " +
-        " t.DISTRICT_NAME, " +
-        " a.AMPHUR_NAME, " +
-        " p.PROVINCE_NAME, " +
-        " gd.image, " +
-        " sex.name AS sex, " +
-        " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age" +
-        " FROM guest_donor AS gd " +
-        " LEFT JOIN donor_provinces AS p " +
-        "   ON gd.chwpart = p.PROVINCE_ID " +
-        " LEFT JOIN donor_amphures AS a " +
-        "   ON gd.amppart = a.AMPHUR_ID " +
-        " LEFT JOIN donor_districts AS t " +
-        "   ON gd.tmbpart = t.DISTRICT_CODE " +
-        " LEFT JOIN donor_marital_status AS marry " +
-        "   ON gd.marrystatus = marry.status_id " +
-        " LEFT JOIN donor_occupation AS job " +
-        "   ON gd.job = job.occu_id " +
-        " LEFT JOIN bb_sex AS sex" +
-        "   ON gd.sex = sex.code " +
-        `${id ? ` where cid=${id}` : ""} `
-    )
+    .execute(queryString)
     .then((results) => {
       res.send(results[0]);
     })
     .catch((error) => {
-      return res.status(200).json({ message: "error" });
+      return res.status(200).json({ message: "error", error: error.message });
     });
 };
 //===============ประวัติการบริจาคเลือด==============//

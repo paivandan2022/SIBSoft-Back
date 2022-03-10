@@ -82,7 +82,7 @@ const Stock_Detail_unit = (req, res) => {
     '${date_end || ""}'
     )`;
 
-  //console.log(strQuery2);
+  console.log(strQuery2);
   dbConnection
     .execute(strQuery2)
     .then((results) => {
