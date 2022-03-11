@@ -264,6 +264,7 @@ app.get(`/Get_group`, donor.Get_group);
 app.post(`/Add_guest_donor`, donor.Add_guest_donor);
 app.get(`/pname_en_th`, donor.pname_en_th);
 app.get(`/Get_donor_list`, donor.Get_donor_list);
+app.get(`/Get_donor_list_open`, donor.Get_donor_list_open);
 // หน้า Donor_donation_list
 app.get(`/Get_history_donor`, donor.Get_history_donor);
 app.get(`/Get_staff`, donor.Get_staff);

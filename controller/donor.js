@@ -299,6 +299,43 @@ const Get_donor_list = (req, res) => {
     `${
       whereCondition.length > 0 ? ` where ${whereCondition.join(" AND ")}` : ""
     }`;
+  dbConnection
+    .execute(queryString)
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error", error: error.message });
+    });
+};
+//------------------------------//
+const Get_donor_list_open = (req, res) => {
+  const { id } = req.query;
+  const queryString =
+    " SELECT gd.*, " +
+    " concat(gd.pname,' ', gd.fname, ' ', gd.lname) as fullname , " +
+    " job.occu_name, " +
+    " marry.status_name, " +
+    " t.DISTRICT_NAME, " +
+    " a.AMPHUR_NAME, " +
+    " p.PROVINCE_NAME, " +
+    " gd.image, " +
+    " sex.name AS sex, " +
+    " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age" +
+    " FROM guest_donor AS gd " +
+    " LEFT JOIN donor_provinces AS p " +
+    "   ON gd.chwpart = p.PROVINCE_ID " +
+    " LEFT JOIN donor_amphures AS a " +
+    "   ON gd.amppart = a.AMPHUR_ID " +
+    " LEFT JOIN donor_districts AS t " +
+    "   ON gd.tmbpart = t.DISTRICT_CODE " +
+    " LEFT JOIN donor_marital_status AS marry " +
+    "   ON gd.marrystatus = marry.status_id " +
+    " LEFT JOIN donor_occupation AS job " +
+    "   ON gd.job = job.occu_id " +
+    " LEFT JOIN bb_sex AS sex" +
+    "   ON gd.sex = sex.code " +
+    `where id = '${id}'`;
   console.log("queryString", queryString);
   dbConnection
     .execute(queryString)
@@ -373,4 +410,5 @@ module.exports = {
   Get_staff,
   Get_history_donor,
   Get_question,
+  Get_donor_list_open,
 };
