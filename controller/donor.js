@@ -17,6 +17,82 @@ const pname_en_th = (req, res) => {
 };
 
 //=============================//
+// const Add_guest_donor = (req, res) => {
+//   const {
+//     cid,
+//     passport,
+//     group,
+//     pname,
+//     fname,
+//     lname,
+//     pname_en,
+//     fname_en,
+//     lname_en,
+//     sex,
+//     marrystatus,
+//     job,
+//     phone,
+//     email,
+//     birthday,
+//     addrpart,
+//     soipart,
+//     moopart,
+//     roadpart,
+//     chwpart,
+//     tmbpart,
+//     amppart,
+//     postcode,
+//     image,
+//   } = req.body;
+//   console.log("req.body---------->", req.body);
+
+//   const strAdd_G_donor = `INSERT INTO guest_donor
+//     (
+//       cid, passport, bloodgroup, pname, fname, lname, pname_en, fname_en, lname_en, sex, marrystatus, job, phone,  email, birthday, addrpart, soipart, moopart, roadpart, chwpart, tmbpart, amppart,
+//       postcode ,image,insert_date
+//     )
+//     VALUES
+//     (
+//     '${cid}' ,
+//     '${passport || ""}' ,
+//     '${group}' ,
+//     '${pname}' ,
+//     '${fname}' ,
+//     '${lname}' ,
+//     '${pname_en}' ,
+//     '${fname_en}' ,
+//     '${lname_en}' ,
+//     '${sex}' ,
+//     '${marrystatus}' ,
+//     '${job}' ,
+//     '${phone || ""}' ,
+//     '${email || ""}' ,
+//     '${birthday}' ,
+//     '${addrpart}' ,
+//     '${soipart || ""}' ,
+//     '${moopart || ""}' ,
+//     '${roadpart || ""}' ,
+//     '${chwpart}' ,
+//     '${tmbpart}' ,
+//     '${amppart}' ,
+//     '${postcode.zipcode}',
+//     '${image}',
+//     now()
+//       )`;
+
+//   console.log("strAdd_G_donor------>", strAdd_G_donor);
+//   dbConnection
+//     .execute(strAdd_G_donor)
+//     .then((results) => {
+//       res.send("OK");
+//     })
+//     .catch((error) => {
+//       return res.status(200).json({ message: "error", error: error.message });
+//     });
+// };
+//=============================//
+
+//=============================//
 const Add_guest_donor = (req, res) => {
   const {
     cid,
@@ -321,8 +397,24 @@ const Get_donor_list_open = (req, res) => {
     " p.PROVINCE_NAME, " +
     " gd.image, " +
     " sex.name AS sex, " +
-    " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age" +
+    " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age " +
+    " , d.donor_no " + //รหัสผู้บริจาค
+    " , db.donor_count " + //ครั้งที่
+    " , concat(SUBSTRING(db.unit_no FROM 1 FOR 3), '.'  " +
+    " , SUBSTRING(db.unit_no FROM 4 FOR 2), '.'  " +
+    " , SUBSTRING(db.unit_no FROM 6 FOR 1), '.'  " +
+    " , SUBSTRING(db.unit_no FROM 7)) as Unitnumber_dot  " + //เลขที่ถุงเลือด
+    " , DATE_FORMAT(DATE_ADD(db.donor_date, INTERVAL 543 YEAR), '%d/%m/%Y') as donor_date " + //วันที่บริจาค
+    " , m.MOBNAME " + //หน่วยบริจาค
+    " , db.donor_type  " + //ถุง
+    " , concat(db.dorngro, ifnull(db.dornrh,'')) as bag_gr " + //หมู่เลือด
+    " , concat(ifnull(db.Saline,' '), ifnull(db.Papain,' '), ifnull(db.Coombs,' '), ifnull(db.antia,' '), ifnull(db.antib,' ') " +
+    " , ifnull(db.hbsag,' '), ifnull(db.TPHA,' '), ifnull(db.hiv,' '), ifnull(db.HBVNAT,' '), ifnull(db.HCVNAT,' '), ifnull(db.HIVNAT,' ') " +
+    " , ifnull(db.alt,' '), ifnull(db.hcv,' '), ifnull(db.hivag,' ')) as blood_result " + //ผลตรวจ
     " FROM guest_donor AS gd " +
+    " left join donor as d ON gd.cid = d.cid  " +
+    " left join donor_blood as db ON d.donor_no = db.donor_no " +
+    " left join donor_mobile as m ON db.service_id = m.MOBCODE " +
     " LEFT JOIN donor_provinces AS p " +
     "   ON gd.chwpart = p.PROVINCE_ID " +
     " LEFT JOIN donor_amphures AS a " +
@@ -335,8 +427,9 @@ const Get_donor_list_open = (req, res) => {
     "   ON gd.job = job.occu_id " +
     " LEFT JOIN bb_sex AS sex" +
     "   ON gd.sex = sex.code " +
-    `where id = '${id}'`;
-  console.log("queryString", queryString);
+    ` where gd.cid = '${id}'` +
+    " order by db.dn desc; ";
+  console.log("queryString--------->", queryString);
   dbConnection
     .execute(queryString)
     .then((results) => {
