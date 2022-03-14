@@ -487,8 +487,12 @@ const Get_question = (req, res) => {
 
 // ===========เพิ่มข้อมูลหน้า frmedit=========
 const Add_donor_frmedit = async (req, res) => {
+<<<<<<< HEAD
   // const { id } = req.query;
 
+=======
+  //const { id } = req.query;
+>>>>>>> 7aaee88902c5f2e31283f2313209c67ab1e28031
   const {
     cid,
     bloodgroup,
@@ -527,6 +531,7 @@ const Add_donor_frmedit = async (req, res) => {
   console.log("check_frmedit", check_frmedit);
   // try {
   console.log("testtty 509---------->", req.body);
+<<<<<<< HEAD
 
   const results = await dbConnection.execute(check_frmedit);
 
@@ -568,9 +573,23 @@ const Add_donor_frmedit = async (req, res) => {
           where pid =  '${results[0][0].pid}';`;
   } else {
     strAdd_history_donor = `INSERT INTO donor 
+=======
+
+  const check_frmedit = `SELECT * from donor where cid = ${cid}`;
+  console.log("check_frmedit", check_frmedit);
+  try {
+    const results = await dbConnection.execute(check_frmedit);
+    if (results[0].length > 0) {
+      return res.status(200).json({
+        status: "error",
+        error: "error",
+      });
+    } else {
+      const strAdd_history_donor = `INSERT INTO donor 
+>>>>>>> 7aaee88902c5f2e31283f2313209c67ab1e28031
     (
       cid, bloodgroup, pname, fname, lname, pname_en, fname_en, lname_en, sex, marrystatus, job, phone,  email, birthday, addrpart, soipart, moopart, roadpart, chwpart, tmbpart, amppart, 
-      postcode , addrpart_new,soipart_new,moopart_new,roadpart_new,chwpart_new,tmbpart_new,amppart_new,postcode_new,image) 
+      postcode,addrpart_new,soipart_new,moopart_new,roadpart_new,chwpart_new,tmbpart_new,amppart_new,postcode_new,image) 
     VALUES  
     (
     '${cid}' , 
