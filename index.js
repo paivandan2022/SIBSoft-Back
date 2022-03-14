@@ -269,6 +269,7 @@ app.get(`/Get_donor_list_open`, donor.Get_donor_list_open);
 app.get(`/Get_history_donor`, donor.Get_history_donor);
 app.get(`/Get_staff`, donor.Get_staff);
 app.get(`/Get_question`, donor.Get_question);
+app.put(`/Add_donor_frmedit`, donor.Add_donor_frmedit);
 
 //--END Donor--//
 
