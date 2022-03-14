@@ -487,9 +487,8 @@ const Get_question = (req, res) => {
 
 // ===========เพิ่มข้อมูลหน้า frmedit=========
 const Add_donor_frmedit = async (req, res) => {
-  console.log("testtty 509---------->", req.body);
-  console.log("sssssssssssss", id);
-  const { id } = req.query;
+  // const { id } = req.query;
+
   const {
     cid,
     bloodgroup,
@@ -523,17 +522,52 @@ const Add_donor_frmedit = async (req, res) => {
     postcode_new,
     image,
   } = req.body;
+
+  const check_frmedit = `SELECT pid from donor where cid = '${cid}';`;
+  console.log("check_frmedit", check_frmedit);
+  // try {
   console.log("testtty 509---------->", req.body);
-  console.log("sssssssssssss", id);
 
-  const check_frmedit = `SELECT * from donor where cid = '${id}'`;
+  const results = await dbConnection.execute(check_frmedit);
 
-  try {
-    const results = await dbConnection.execute(check_frmedit);
-    if (results[0].length > 0) {
-      return res.status(500).json({ message: error.message });
-    } else {
-      const strAdd_history_donor = `INSERT INTO donor 
+  let strAdd_history_donor;
+  if (results[0].length > 0) {
+    //Update
+    strAdd_history_donor = `update  donor  set
+         cid = '${cid}'
+         , bloodgroup ='${bloodgroup}'
+         , pname = '${pname}'
+         , fname ='${fname}'
+         , lname ='${lname}'
+         , pname_en = '${pname_en}' 
+         , fname_en = '${fname_en}' 
+         , lname_en = '${lname_en}' 
+         , sex = if('${sex}'='หญิง','2',if('${sex}' = 'ชาย','1','${sex}'))
+         , marrystatus = '${marrystatus}'
+         , job ='${job}'
+         , phone ='${phone || ""}'
+         ,  email ='${email || ""}'
+         , birthday ='${birthday}' 
+         , addrpart=  '${addrpart}'
+         , soipart ='${soipart || ""}'
+         , moopart ='${moopart || ""}'
+         , roadpart ='${roadpart || ""}'
+         , chwpart ='${chwpart || ""}'
+         , tmbpart ='${tmbpart || ""}'
+         , amppart = '${amppart || ""}'
+         , postcode = '${postcode.zipcode || ""}'
+          , addrpart_new ='${addrpart_new || ""}'
+          ,soipart_new ='${soipart_new || ""}'
+          ,moopart_new ='${moopart_new || ""}' 
+          ,roadpart_new ='${roadpart_new || ""}' 
+          ,chwpart_new ='${chwpart_new}|| ""'
+          ,tmbpart_new ='${tmbpart_new}|| ""' 
+          ,amppart_new ='${amppart_new}|| ""'
+          ,postcode_new ='${postcode_new.zipcode || ""}'
+          ,image =  '${image}'
+          where pid =  '${results[0][0].pid}';`;
+  } else {
+    strAdd_history_donor = `INSERT INTO donor 
     (
       cid, bloodgroup, pname, fname, lname, pname_en, fname_en, lname_en, sex, marrystatus, job, phone,  email, birthday, addrpart, soipart, moopart, roadpart, chwpart, tmbpart, amppart, 
       postcode , addrpart_new,soipart_new,moopart_new,roadpart_new,chwpart_new,tmbpart_new,amppart_new,postcode_new,image) 
@@ -547,7 +581,7 @@ const Add_donor_frmedit = async (req, res) => {
     '${pname_en}' ,
     '${fname_en}' , 
     '${lname_en}' , 
-    '${sex}' , 
+    if('${sex}'='หญิง','2',if('${sex}' = 'ชาย','1','${sex}')) , 
     '${marrystatus}' , 
     '${job}' , 
     '${phone || ""}' ,
@@ -562,20 +596,23 @@ const Add_donor_frmedit = async (req, res) => {
     '${amppart}' ,
     '${postcode.zipcode}',
     '${addrpart_new}' ,
-    '${soipart_new || ""}' ,
-    '${moopart_new || ""}' , 
-    '${roadpart_new || ""}' , 
+    '${soipart_new}' ,
+    '${moopart_new}' , 
+    '${roadpart_new}' , 
     '${chwpart_new}' , 
     '${tmbpart_new}' , 
     '${amppart_new}' ,
     '${postcode_new.zipcode}',
     '${image}');`;
-      const results2 = await dbConnection.execute(strAdd_history_donor);
-      return res.status(200).json(results2[0]);
-    }
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
   }
+
+  // strAdd_history_donor =  strAdd_history_donor + " Insert Donor_blood";
+  console.log("ALL Query ------>", strAdd_history_donor);
+  const results2 = await dbConnection.execute(strAdd_history_donor);
+  return res.status(200).json(results2[0]);
+  // } catch (error) {
+  //   return res.status(500).json({ message: error.message });
+  // }
 };
 //   console.log("strAdd_G_donor------>", strAdd_history_donor);
 //   dbConnection
