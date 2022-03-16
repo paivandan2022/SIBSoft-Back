@@ -9,6 +9,8 @@ const stock_detail = require("./controller/stock_detail");
 const stock_import = require("./controller/stock_import");
 const user = require("./controller/user");
 const donor = require("./controller/donor");
+const confirmpass = require("./controller/confirmpass");
+
 const bodyParser = require("body-parser");
 const configs = require("./configs");
 const multer = require("multer");
@@ -270,7 +272,10 @@ app.get(`/Get_history_donor`, donor.Get_history_donor);
 app.get(`/Get_staff`, donor.Get_staff);
 app.get(`/Get_question`, donor.Get_question);
 app.put(`/Add_donor_frmedit`, donor.Add_donor_frmedit);
+app.get(`/Get_Donor_Blood`, donor.Get_Donor_Blood);
 
 //--END Donor--//
+// confirm pass //
+app.get(`Confirm_password2`, confirmpass.Confirm_password2);
 
 app.listen(3306, () => console.log("Server is Running..."));

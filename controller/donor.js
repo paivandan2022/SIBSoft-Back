@@ -271,7 +271,6 @@ const Get_Province = (req, res) => {
     });
 };
 //=============================//
-
 //============fetchnew=================//
 const Get_Tumbon_new = (req, res) => {
   dbConnection
@@ -387,12 +386,12 @@ const Get_donor_list = (req, res) => {
 //------------------------------//
 const Get_donor_list_open = (req, res) => {
   const { id } = req.query;
-  console.log("eq.query", req.query);
   const queryString =
     " SELECT gd.*, " +
     " concat(gd.pname,' ', gd.fname, ' ', gd.lname) as fullname , " +
     " job.occu_name, " +
     " d.phone as donor_phone, " +
+    " gd.birthday as dob, " +
     " d.email as donor_email, " +
     " marry.status_name, " +
     " t.DISTRICT_NAME, " +
@@ -401,23 +400,23 @@ const Get_donor_list_open = (req, res) => {
     " gd.image, " +
     " sex.name AS sex, " +
     " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age " +
-    " , d.donor_no as donor_no" + //รหัสผู้บริจาค
-    " , db.donor_count as donor_count" + //ครั้งที่
-    " , concat(SUBSTRING(db.unit_no FROM 1 FOR 3), '.'  " +
-    " , SUBSTRING(db.unit_no FROM 4 FOR 2), '.'  " +
-    " , SUBSTRING(db.unit_no FROM 6 FOR 1), '.'  " +
-    " , SUBSTRING(db.unit_no FROM 7)) as Unitnumber_dot  " + //เลขที่ถุงเลือด
-    " , DATE_FORMAT(DATE_ADD(db.donor_date, INTERVAL 543 YEAR), '%d/%m/%Y') as donor_date " + //วันที่บริจาค
-    " , m.MOBNAME as mobname " + //หน่วยบริจาค
-    " , db.donor_type  as donor_type" + //ถุง
-    " , concat(db.dorngro, ifnull(db.dornrh,'')) as bag_gr " + //หมู่เลือด
-    " , concat(ifnull(db.Saline,' '), ifnull(db.Papain,' '), ifnull(db.Coombs,' '), ifnull(db.antia,' '), ifnull(db.antib,' ') " +
-    " , ifnull(db.hbsag,' '), ifnull(db.TPHA,' '), ifnull(db.hiv,' '), ifnull(db.HBVNAT,' '), ifnull(db.HCVNAT,' '), ifnull(db.HIVNAT,' ') " +
-    " , ifnull(db.alt,' '), ifnull(db.hcv,' '), ifnull(db.hivag,' ')) as blood_result " + //ผลตรวจ
+    " , d.donor_no as donor_no " + //รหัสผู้บริจาค
+    // " , db.donor_count as donor_count" + //ครั้งที่
+    // " , concat(SUBSTRING(db.unit_no FROM 1 FOR 3), '.'  " +
+    // " , SUBSTRING(db.unit_no FROM 4 FOR 2), '.'  " +
+    // " , SUBSTRING(db.unit_no FROM 6 FOR 1), '.'  " +
+    // " , SUBSTRING(db.unit_no FROM 7)) as Unitnumber_dot  " + //เลขที่ถุงเลือด
+    // " , DATE_FORMAT(DATE_ADD(db.donor_date, INTERVAL 543 YEAR), '%d/%m/%Y') as donor_date " + //วันที่บริจาค
+    // " , m.MOBNAME as mobname " + //หน่วยบริจาค
+    // " , db.donor_type  as donor_type" + //ถุง
+    // " , concat(db.dorngro, ifnull(db.dornrh,'')) as bag_gr " + //หมู่เลือด
+    // " , concat(ifnull(db.Saline,' '), ifnull(db.Papain,' '), ifnull(db.Coombs,' '), ifnull(db.antia,' '), ifnull(db.antib,' ') " +
+    // " , ifnull(db.hbsag,' '), ifnull(db.TPHA,' '), ifnull(db.hiv,' '), ifnull(db.HBVNAT,' '), ifnull(db.HCVNAT,' '), ifnull(db.HIVNAT,' ') " +
+    // " , ifnull(db.alt,' '), ifnull(db.hcv,' '), ifnull(db.hivag,' ')) as blood_result " + //ผลตรวจ
     " FROM guest_donor AS gd " +
     " left join donor as d ON gd.cid = d.cid  " +
-    " left join donor_blood as db ON d.donor_no = db.donor_no " +
-    " left join donor_mobile as m ON db.service_id = m.MOBCODE " +
+    // " left join donor_blood as db ON d.donor_no = db.donor_no " +
+    // " left join donor_mobile as m ON db.service_id = m.MOBCODE " +
     " LEFT JOIN donor_provinces AS p " +
     "   ON gd.chwpart = p.PROVINCE_ID " +
     " LEFT JOIN donor_amphures AS a " +
@@ -430,9 +429,9 @@ const Get_donor_list_open = (req, res) => {
     "   ON gd.job = job.occu_id " +
     " LEFT JOIN bb_sex AS sex" +
     "   ON gd.sex = sex.code " +
-    ` where gd.cid = '${id}'` +
-    " order by db.dn desc; ";
-  console.log("queryString--------->", queryString);
+    ` where gd.cid = '${id}' `;
+  // " order by db.dn desc ";
+  //console.log("queryString--------->", queryString);
   dbConnection
     .execute(queryString)
     .then((results) => {
@@ -450,7 +449,6 @@ const Get_history_donor = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      // console.log("ประวัติการบริจาคเลือด", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -466,7 +464,6 @@ const Get_staff = (req, res) => {
     )
     .then((results) => {
       res.send(results[0]);
-      // console.log("รายชื่อเจ้าหน้าที่", results[0]);
     })
     .catch((error) => {
       return res.status(200).json({ message: "error" });
@@ -490,8 +487,8 @@ const Get_question = (req, res) => {
 
 // ===========เพิ่มข้อมูลหน้า frmedit=========
 const Add_donor_frmedit = async (req, res) => {
-  console.log("====Add_donor_frmedit====");
   const {
+    staff,
     cid,
     bloodgroup,
     pname,
@@ -523,16 +520,12 @@ const Add_donor_frmedit = async (req, res) => {
     amppart_new,
     postcode_new,
     image,
+    address_more,
   } = req.body;
 
   const check_frmedit = `SELECT pid,donor_no from donor where cid = '${cid}';`;
-  console.log("==check_frmedit==", check_frmedit);
   try {
-    // console.log("testtty 509---------->", req.body);
-
     const results = await dbConnection.execute(check_frmedit);
-
-    console.log("==========results[0][0]", results[0][0]);
     let strAdd_history_donor;
     if (results[0].length > 0) {
       //Update
@@ -568,12 +561,13 @@ const Add_donor_frmedit = async (req, res) => {
           ,amppart_new ='${amppart_new}'
           ,postcode_new ='${postcode_new.zipcode}'
           ,image =  '${image}'
+          ,address_more =  '${address_more || ""}'
           where pid =  '${results[0][0].pid}';`;
     } else {
       strAdd_history_donor = `INSERT INTO donor 
     (
       cid, bloodgroup, pname, fname, lname, pname_en, fname_en, lname_en, sex, marrystatus, job, phone,  email, birthday, addrpart, soipart, moopart, roadpart, chwpart, tmbpart, amppart, 
-      postcode , addrpart_new,soipart_new,moopart_new,roadpart_new,chwpart_new,tmbpart_new,amppart_new,postcode_new,image) 
+      postcode , addrpart_new,soipart_new,moopart_new,roadpart_new,chwpart_new,tmbpart_new,amppart_new,postcode_new,image,address_more) 
     VALUES  
     (
     '${cid}' , 
@@ -606,13 +600,19 @@ const Add_donor_frmedit = async (req, res) => {
     '${tmbpart_new}' , 
     '${amppart_new}' ,
     '${postcode_new.zipcode}',
-    '${image}');`;
+    '${image}',
+    '${address_more || ""}',
+    );`;
     }
-
-    const insert_donor_blood = `insert into donor_blood (cid, donor_no,pid, donor_date, status) values ('${cid}', '${results[0][0].donor_no}','${results[0][0].pid}' ,now(), '2');`;
+    let insert_donor_blood;
+    const check = `SELECT * from donor_blood where cid = '${cid}' and status ='2' ;`;
+    const resultscheck = await dbConnection.execute(check);
+    if (resultscheck[0].length > 0) {
+      insert_donor_blood = `update donor_blood set cid='${cid}', donor_no = '${results[0][0].donor_no}',pid='${results[0][0].pid}' , staff_register = '${staff}' where dn ='${resultscheck[0][0].dn}';`;
+    } else {
+      insert_donor_blood = `insert into donor_blood (cid, donor_no,pid, donor_date, status, staff_register) values ('${cid}', '${results[0][0].donor_no}','${results[0][0].pid}' ,now(), '2', '${staff}');`;
+    }
     const update_guest_donor = `update guest_donor set status = '2' where cid = '${cid}' and status = '1';`;
-
-    console.log("ALL Query ------>", strAdd_history_donor);
     const results2 = await Promise.all([
       dbConnection.execute(strAdd_history_donor),
       dbConnection.execute(insert_donor_blood),
@@ -620,22 +620,60 @@ const Add_donor_frmedit = async (req, res) => {
     ]);
     return res.status(200).json({ message: "success" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: "error", message: error.message });
   }
 };
 
-//   console.log("strAdd_G_donor------>", strAdd_history_donor);
-//   dbConnection
-//     .execute(strAdd_history_donor)
-//     .then((results) => {
-//       res.send("OK");
-//     })
-//     .catch((error) => {
-//       return res.status(200).json({ message: "error", error: error.message });
-//     });
-// };
+const Get_Donor_Blood = async (req, res) => {
+  const { donor_no } = req.query;
+  const str = `select db.donor_no AS donor_no,
+db.donor_count AS donor_count,
+concat(
+SUBSTRING( db.unit_no FROM 1 FOR 3 ),
+'.',
+SUBSTRING( db.unit_no FROM 4 FOR 2 ),
+'.',
+SUBSTRING( db.unit_no FROM 6 FOR 1 ),
+'.',
+SUBSTRING( db.unit_no FROM 7 ) 
+) AS Unitnumber_dot,
+DATE_FORMAT( DATE_ADD( db.donor_date, INTERVAL 543 YEAR ), '%d/%m/%Y' ) AS donor_date,
+m.MOBNAME AS mobname,
+db.donor_type AS donor_type,
+concat( db.dorngro, ifnull( db.dornrh, '' ) ) AS bag_gr,
+concat(
+ifnull( db.Saline, ' ' ),
+ifnull( db.Papain, ' ' ),
+ifnull( db.Coombs, ' ' ),
+ifnull( db.antia, ' ' ),
+ifnull( db.antib, ' ' ),
+ifnull( db.hbsag, ' ' ),
+ifnull( db.TPHA, ' ' ),
+ifnull( db.hiv, ' ' ),
+ifnull( db.HBVNAT, ' ' ),
+ifnull( db.HCVNAT, ' ' ),
+ifnull( db.HIVNAT, ' ' ),
+ifnull( db.alt, ' ' ),
+ifnull( db.hcv, ' ' ),
+ifnull( db.hivag, ' ' ) 
+) AS blood_result 
+FROM donor_blood as db
+LEFT JOIN donor_mobile AS m ON db.service_id = m.MOBCODE
+where db.donor_no = '${donor_no}'
+and db.result IS NOT NULL 
+order by db.pid desc;`;
 
-// ====================
+  dbConnection
+    .execute(str)
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+
+// ==================== //
 module.exports = {
   pname_en_th,
   Add_guest_donor,
@@ -657,4 +695,5 @@ module.exports = {
   Get_question,
   Get_donor_list_open,
   Add_donor_frmedit,
+  Get_Donor_Blood,
 };

@@ -106,8 +106,9 @@ const Confirm_password = (req, res) => {
     .then((results) => {
       res.send(results[0][0]);
     })
+
     .catch((error) => {
-      return res.status(200).json({ message: "error" });
+      return res.status(200).json({ message: "error", message: error.message });
     });
 };
 
