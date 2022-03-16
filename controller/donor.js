@@ -595,10 +595,8 @@ order by db.pid desc;`;
 };
 //=============================//
 const Eject_register = async (req, res) => {
-  const { eject_note, staff } = req.body;
-  const { cid } = req.query;
-  console.log("req.query---->", eject_note, staff);
-  console.log("cid", cid);
+  const { eject_note, staff, cid } = req.body;
+  console.log("req.query---->", req.body);
 };
 //=============================//
 module.exports = {
