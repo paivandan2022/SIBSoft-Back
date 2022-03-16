@@ -320,6 +320,7 @@ const Get_donor_list_open = (req, res) => {
     " p.PROVINCE_NAME, " +
     " gd.image, " +
     " sex.name AS sex, " +
+    "CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char) as age_year, " +
     " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ', CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%d') - 1, char), ' วัน ') as age " +
     " , d.donor_no as donor_no " + //รหัสผู้บริจาค
     // " , db.donor_count as donor_count" + //ครั้งที่
@@ -597,7 +598,17 @@ order by db.pid desc;`;
 const Eject_register = async (req, res) => {
   const { eject_note, staff, cid } = req.body;
   console.log("req.query---->", req.body);
+  const strQuery = `update donor_guest set status = '5',eject_note='${eject_note}', staff_eject='${staff}' where cid = '${cid}' and status = '1';`;
+  dbConnection
+    .execute(strQuery)
+    .then((results) => {
+      res.send(results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error", error: error.message });
+    });
 };
+
 //=============================//
 module.exports = {
   pname_en_th,
