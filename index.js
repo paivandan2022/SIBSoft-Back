@@ -273,6 +273,7 @@ app.get(`/Get_staff`, donor.Get_staff);
 app.get(`/Get_question`, donor.Get_question);
 app.put(`/Add_donor_frmedit`, donor.Add_donor_frmedit);
 app.get(`/Get_Donor_Blood`, donor.Get_Donor_Blood);
+app.post(`/Eject_register`, donor.Eject_register);
 
 //--END Donor--//
 // confirm pass //

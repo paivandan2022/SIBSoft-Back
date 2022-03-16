@@ -16,81 +16,6 @@ const pname_en_th = (req, res) => {
     });
 };
 
-// const Add_guest_donor = (req, res) => {
-//   const {
-//     cid,
-//     passport,
-//     group,
-//     pname,
-//     fname,
-//     lname,
-//     pname_en,
-//     fname_en,
-//     lname_en,
-//     sex,
-//     marrystatus,
-//     job,
-//     phone,
-//     email,
-//     birthday,
-//     addrpart,
-//     soipart,
-//     moopart,
-//     roadpart,
-//     chwpart,
-//     tmbpart,
-//     amppart,
-//     postcode,
-//     image,
-//   } = req.body;
-//   console.log("req.body---------->", req.body);
-
-//   const strAdd_G_donor = `INSERT INTO guest_donor
-//     (
-//       cid, passport, bloodgroup, pname, fname, lname, pname_en, fname_en, lname_en, sex, marrystatus, job, phone,  email, birthday, addrpart, soipart, moopart, roadpart, chwpart, tmbpart, amppart,
-//       postcode ,image,insert_date
-//     )
-//     VALUES
-//     (
-//     '${cid}' ,
-//     '${passport || ""}' ,
-//     '${group}' ,
-//     '${pname}' ,
-//     '${fname}' ,
-//     '${lname}' ,
-//     '${pname_en}' ,
-//     '${fname_en}' ,
-//     '${lname_en}' ,
-//     '${sex}' ,
-//     '${marrystatus}' ,
-//     '${job}' ,
-//     '${phone || ""}' ,
-//     '${email || ""}' ,
-//     '${birthday}' ,
-//     '${addrpart}' ,
-//     '${soipart || ""}' ,
-//     '${moopart || ""}' ,
-//     '${roadpart || ""}' ,
-//     '${chwpart}' ,
-//     '${tmbpart}' ,
-//     '${amppart}' ,
-//     '${postcode.zipcode}',
-//     '${image}',
-//     now()
-//       )`;
-
-//   console.log("strAdd_G_donor------>", strAdd_G_donor);
-//   dbConnection
-//     .execute(strAdd_G_donor)
-//     .then((results) => {
-//       res.send("OK");
-//     })
-//     .catch((error) => {
-//       return res.status(200).json({ message: "error", error: error.message });
-//     });
-// };
-//=============================//
-
 //=============================//
 const Add_guest_donor = (req, res) => {
   const {
@@ -119,9 +44,7 @@ const Add_guest_donor = (req, res) => {
     postcode,
     image,
   } = req.body;
-  // console.log("req.body---------->", req.body);
-
-  const strAdd_G_donor = `INSERT INTO guest_donor 
+  const strAdd_G_donor = `INSERT INTO donor_guest
     (
       cid, passport, bloodgroup, pname, fname, lname, pname_en, fname_en, lname_en, sex, marrystatus, job, phone,  email, birthday, addrpart, soipart, moopart, roadpart, chwpart, tmbpart, amppart, 
       postcode ,image,insert_date,status
@@ -156,8 +79,6 @@ const Add_guest_donor = (req, res) => {
     '1'
 
       )`;
-
-  console.log("strAdd_G_donor------>", strAdd_G_donor);
   dbConnection
     .execute(strAdd_G_donor)
     .then((results) => {
@@ -357,7 +278,7 @@ const Get_donor_list = (req, res) => {
     " sex.name AS sex, " +
     " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age" +
     " ,bs.status_name " +
-    " FROM guest_donor AS gd " +
+    " FROM donor_guest AS gd " +
     " LEFT JOIN donor_provinces AS p " +
     "   ON gd.chwpart = p.PROVINCE_ID " +
     " LEFT JOIN donor_amphures AS a " +
@@ -399,7 +320,7 @@ const Get_donor_list_open = (req, res) => {
     " p.PROVINCE_NAME, " +
     " gd.image, " +
     " sex.name AS sex, " +
-    " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age " +
+    " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ', CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%d') - 1, char), ' วัน ') as age " +
     " , d.donor_no as donor_no " + //รหัสผู้บริจาค
     // " , db.donor_count as donor_count" + //ครั้งที่
     // " , concat(SUBSTRING(db.unit_no FROM 1 FOR 3), '.'  " +
@@ -413,7 +334,7 @@ const Get_donor_list_open = (req, res) => {
     // " , concat(ifnull(db.Saline,' '), ifnull(db.Papain,' '), ifnull(db.Coombs,' '), ifnull(db.antia,' '), ifnull(db.antib,' ') " +
     // " , ifnull(db.hbsag,' '), ifnull(db.TPHA,' '), ifnull(db.hiv,' '), ifnull(db.HBVNAT,' '), ifnull(db.HCVNAT,' '), ifnull(db.HIVNAT,' ') " +
     // " , ifnull(db.alt,' '), ifnull(db.hcv,' '), ifnull(db.hivag,' ')) as blood_result " + //ผลตรวจ
-    " FROM guest_donor AS gd " +
+    " FROM donor_guest AS gd " +
     " left join donor as d ON gd.cid = d.cid  " +
     // " left join donor_blood as db ON d.donor_no = db.donor_no " +
     // " left join donor_mobile as m ON db.service_id = m.MOBCODE " +
@@ -535,9 +456,9 @@ const Add_donor_frmedit = async (req, res) => {
          , pname = '${pname}'
          , fname ='${fname}'
          , lname ='${lname}'
-         , pname_en = '${pname_en}' 
-         , fname_en = '${fname_en}' 
-         , lname_en = '${lname_en}' 
+         , pname_en = '${pname_en || ""}' 
+         , fname_en = '${fname_en || ""}' 
+         , lname_en = '${lname_en || ""}' 
          , sex = if('${sex}'='หญิง','2',if('${sex}' = 'ชาย','1','${sex}'))
          , marrystatus = '${marrystatus}'
          , job ='${job}'
@@ -575,9 +496,9 @@ const Add_donor_frmedit = async (req, res) => {
     '${pname}' , 
     '${fname}' , 
     '${lname}' , 
-    '${pname_en}' ,
-    '${fname_en}' , 
-    '${lname_en}' , 
+    '${pname_en || ""}' ,
+    '${fname_en || ""}' , 
+    '${lname_en || ""}' , 
     if('${sex}'='หญิง','2',if('${sex}' = 'ชาย','1','${sex}')) , 
     '${marrystatus}' , 
     '${job}' , 
@@ -612,7 +533,7 @@ const Add_donor_frmedit = async (req, res) => {
     } else {
       insert_donor_blood = `insert into donor_blood (cid, donor_no,pid, donor_date, status, staff_register) values ('${cid}', '${results[0][0].donor_no}','${results[0][0].pid}' ,now(), '2', '${staff}');`;
     }
-    const update_guest_donor = `update guest_donor set status = '2' where cid = '${cid}' and status = '1';`;
+    const update_guest_donor = `update donor_guest set status = '2' where cid = '${cid}' and status = '1';`;
     const results2 = await Promise.all([
       dbConnection.execute(strAdd_history_donor),
       dbConnection.execute(insert_donor_blood),
@@ -672,8 +593,14 @@ order by db.pid desc;`;
       return res.status(200).json({ message: "error" });
     });
 };
-
-// ==================== //
+//=============================//
+const Eject_register = async (req, res) => {
+  const { eject_note, staff } = req.body;
+  const { cid } = req.query;
+  console.log("req.query---->", eject_note, staff);
+  console.log("cid", cid);
+};
+//=============================//
 module.exports = {
   pname_en_th,
   Add_guest_donor,
@@ -696,4 +623,5 @@ module.exports = {
   Get_donor_list_open,
   Add_donor_frmedit,
   Get_Donor_Blood,
+  Eject_register,
 };
