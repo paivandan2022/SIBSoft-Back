@@ -134,6 +134,19 @@ const Get_sex = (req, res) => {
     });
 };
 //=============================//
+//=============================//
+const Get_Mobile = (req, res) => {
+  dbConnection
+    .execute("SELECT * FROM donor_mobile")
+    .then((results) => {
+      res.send(results[0]);
+      console.log("สถานที่", results[0]);
+    })
+    .catch((error) => {
+      return res.status(200).json({ message: "error" });
+    });
+};
+//=============================//
 const Get_Zip = (req, res) => {
   dbConnection
     .execute(
@@ -249,6 +262,7 @@ const Get_Zip_new = (req, res) => {
       return res.status(200).json({ message: "error" });
     });
 };
+
 //=============================//
 const Get_donor_list = (req, res) => {
   const { id, date_start, date_end, keyword } = req.query;
@@ -275,6 +289,7 @@ const Get_donor_list = (req, res) => {
     " a.AMPHUR_NAME, " +
     " p.PROVINCE_NAME, " +
     " gd.image, " +
+    " gd.pid, " +
     " sex.name AS sex, " +
     " concat(CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%Y') + 0, char), ' ปี ',CONVERT(DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), gd.birthday)), '%m') - 1, char), ' เดือน ') as age" +
     " ,bs.status_name " +
@@ -473,7 +488,7 @@ const Add_donor_frmedit = async (req, res) => {
          , chwpart ='${chwpart}'
          , tmbpart ='${tmbpart}'
          , amppart = '${amppart}'
-         , postcode = '${postcode.zipcode}'
+         , postcode = '${postcode.zipcode || ""}'
           , addrpart_new ='${addrpart_new}'
           ,soipart_new ='${soipart_new}'
           ,moopart_new ='${moopart_new}' 
@@ -481,7 +496,7 @@ const Add_donor_frmedit = async (req, res) => {
           ,chwpart_new ='${chwpart_new}'
           ,tmbpart_new ='${tmbpart_new}' 
           ,amppart_new ='${amppart_new}'
-          ,postcode_new ='${postcode_new.zipcode}'
+          ,postcode_new ='${postcode_new.zipcode || ""}'
           ,image =  '${image}'
           ,address_more =  '${address_more || ""}'
           where pid =  '${results[0][0].pid}';`;
@@ -596,9 +611,10 @@ order by db.pid desc;`;
 };
 //=============================//
 const Eject_register = async (req, res) => {
-  const { eject_note, staff, cid } = req.body;
-  console.log("req.query---->", req.body);
-  const strQuery = `update donor_guest set status = '5',eject_note='${eject_note}', staff_eject='${staff}' where cid = '${cid}' and status = '1';`;
+  const { eject_note, staff, pid } = req.body;
+  console.log("Eject_register---->", req.body);
+  const strQuery = `update donor_guest set status = '5',eject_note='${eject_note}', staff_eject='${staff}' where pid = '${pid}' and status = '1';`;
+  console.log("sssssssssss11121212", strQuery);
   dbConnection
     .execute(strQuery)
     .then((results) => {
@@ -633,4 +649,5 @@ module.exports = {
   Add_donor_frmedit,
   Get_Donor_Blood,
   Eject_register,
+  Get_Mobile,
 };
